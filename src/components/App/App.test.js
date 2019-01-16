@@ -6,5 +6,6 @@ import InputPassword from '../InputPassword';
 it('should render as expected', () => {
   const wrapper = shallow(<App />);
 
-  expect(wrapper.contains(<InputPassword />)).toBe(true);
+  // console.log(wrapper.html());
+  expect(wrapper.contains(<InputPassword />)).toBeCalled(true);
 });

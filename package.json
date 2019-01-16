@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "babel-plugin-import": "^1.11.0",
+    "babel-preset-env": "^1.7.0",
     "customize-cra": "^0.2.9",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
