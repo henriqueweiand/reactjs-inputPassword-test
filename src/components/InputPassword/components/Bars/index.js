@@ -5,28 +5,21 @@ import { Bar, Container } from './styles';
 
 export default class Bars extends Component {
   static propTypes = {
-    maxBars: PropTypes.number.isRequired,
-    status: PropTypes.string.isRequired,
-    rules: PropTypes.arrayOf(
-      PropTypes.shape({
-        valid: PropTypes.bool,
-      }),
-    ),
+    status: PropTypes.string,
+    activeBars: PropTypes.number,
   };
 
   static defaultProps = {
-    rules: [],
+    activeBars: 0,
+    status: 'status',
   };
 
   handleBars = () => {
-    const { maxBars, rules, status } = this.props;
+    const { activeBars, status } = this.props;
     const bars = [];
-    const activeBars = rules.filter((rule) => {
-      if (rule.valid) { return true; } return false;
-    });
 
-    for (let cont = 0; cont < maxBars; cont++) {
-      bars.push(<Bar key={cont} status={cont < activeBars.length ? status : 'default'} />);
+    for (let cont = 0; cont < 3; cont += 1) {
+      bars.push(<Bar key={cont} status={cont < activeBars ? status : 'default'} />);
     }
 
     return bars;

@@ -9,8 +9,8 @@ export default class InputPassword extends Component {
   state = {
     value: '',
     rules: [],
+    activeBars: 0,
     status: 'default', // default, warning, danger
-    maxBars: 3, // Quantidade de barras de progresso
   }
 
   static propTypes = {
@@ -39,47 +39,77 @@ export default class InputPassword extends Component {
 
     if (value) {
       const newRules = [];
+      let newActiveBars = 0;
       let newStatus = status;
       let contValid = 0;
 
-      rules.map((rule) => {
-        const head = rule.rule.split(':');
+      // < Rules
+      rules.map((row) => {
+        const [rule, valueRule] = row.rule.split(':');
         let valid = false;
 
-        switch (head[0]) {
+        switch (rule) {
           case 'exists':
-            valid = this.state.value.indexOf(head[1]) > -1;
+            valid = value.indexOf(valueRule) > -1;
             break;
 
           case 'min':
-            valid = this.state.value.length >= head[1];
+            valid = value.length >= valueRule;
             break;
 
           case 'max':
-            valid = this.state.value.length <= head[1];
+            valid = value.length <= valueRule;
             break;
 
           default:
             valid = false;
         }
 
-        if (valid) { contValid++; }
+        if (valid) { contValid += 1; }
 
         return newRules.push({
-          ...rule,
+          ...row,
           valid,
         });
       });
+      // > Rules
 
+      // < Progress & status
       if (contValid === rules.length) {
         newStatus = 'success';
-      } else if (contValid < (rules.length / 2)) {
-        newStatus = 'danger';
+        newActiveBars = 3;
       } else {
-        newStatus = 'warning';
+        switch (rules.length) {
+          case 1:
+            newStatus = 'danger';
+            newActiveBars = 1;
+            break;
+          case 2:
+            if (contValid === 1) {
+              newStatus = 'warning';
+              newActiveBars = 2;
+            } else {
+              newStatus = 'danger';
+              newActiveBars = 1;
+            }
+            break;
+          default:
+            if (contValid < (rules.length / 2)) {
+              newStatus = 'danger';
+              newActiveBars = 1;
+            } else {
+              newActiveBars = 2;
+              newStatus = 'warning';
+            }
+        }
       }
+      // > Progress & status
 
-      this.setState({ rules: newRules, status: newStatus });
+      this.setState({
+        rules: newRules,
+        status: newStatus,
+        activeBars: newActiveBars,
+      });
     } else {
       this.setState({ rules, status: 'default' });
     }
@@ -87,7 +117,7 @@ export default class InputPassword extends Component {
 
   render() {
     const {
-      rules, status, value, maxBars,
+      rules, status, value, activeBars,
     } = this.state;
 
     return (
@@ -103,7 +133,7 @@ export default class InputPassword extends Component {
           value={value}
           onChange={e => this.handleChange('value', e.target.value)}
         />
-        <Bars rules={rules} maxBars={maxBars} status={status} />
+        <Bars activeBars={activeBars} status={status} />
         <Rules rules={rules} />
       </Page>
     );
